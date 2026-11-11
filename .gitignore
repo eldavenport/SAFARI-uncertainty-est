@@ -3,3 +3,5 @@
 **.bin
 .venv/
 **.egg-info
+**.cdf
+**__pycache**
