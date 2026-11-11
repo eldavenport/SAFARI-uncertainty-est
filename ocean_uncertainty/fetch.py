@@ -9,7 +9,6 @@ A region is (lon_min, lon_max, lat_min, lat_max) in degrees, with lon_max > lon_
 
 import argparse
 import pathlib
-import urllib.request
 
 import argopy
 import copernicusmarine
@@ -112,38 +111,9 @@ def select_region(ds: xr.Dataset, region, lon: str = "lon", lat: str = "lat") ->
     return ds.sel({lat: slice(lat_min, lat_max)})
 
 
-def fetch_woa23(period: str, resolution: str, months: list[int], region, max_depth: float,
-                out_dir: pathlib.Path) -> list[pathlib.Path]:
-    """Save World Ocean Atlas 2023 monthly temperature for one climatological period, cut to region and depth.
-
-    The global file is downloaded and cut locally: the server's subsetting service took minutes per file where the
-    whole file took under a minute (tested 2026-11-10). Levels are kept while their layer (``depth_bnds``) starts
-    above ``max_depth``.
-    """
-    out_dir.mkdir(parents=True, exist_ok=True)
-    written = []
-    for month in months:
-        url = sources.WOA23["url"].format(period=period, res=resolution, month=month,
-                                          grid=sources.WOA23["grid_codes"][resolution])
-        path = out_dir / url.rsplit("/", 1)[-1]
-        if not path.exists():
-            whole = path.with_suffix(".global.part")
-            urllib.request.urlretrieve(url, whole)
-            with xr.open_dataset(whole, decode_times=False) as ds:
-                ds = select_region(ds, region)
-                ds = ds.isel(depth=np.flatnonzero(ds.depth_bnds.values[:, 0] < max_depth))
-                ds.attrs.update(source_url=url, citation=sources.WOA23["citation"])
-                partial = path.with_suffix(".part")
-                ds.load().to_netcdf(partial)
-            whole.unlink()
-            partial.rename(path)
-        written.append(path)
-    return written
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("source", choices=["grep", "glorys12", "ostia", "argo", "woa23"])
+    parser.add_argument("source", choices=["grep", "argo"])
     parser.add_argument("--out", type=pathlib.Path, required=True, help="directory for this source's files")
     parser.add_argument("--region", type=float, nargs=4, metavar=("LON_MIN", "LON_MAX", "LAT_MIN", "LAT_MAX"))
     parser.add_argument("--start", help="first date, YYYY-MM-DD")
@@ -154,25 +124,14 @@ def main() -> None:
                         help="model variable names (GREP adds the member suffixes)")
     parser.add_argument("--max-pressure", type=float, help="Argo: deepest pressure to fetch (dbar)")
     parser.add_argument("--argo-mode", default="research", choices=["research", "standard", "expert"])
-    parser.add_argument("--woa-period", default="decav91C0", help="WOA23 climatological period, e.g. decav91C0")
-    parser.add_argument("--woa-resolution", default="0.25", choices=sorted(sources.WOA23["grid_codes"]))
-    parser.add_argument("--months", type=int, nargs="+", default=list(range(1, 13)), help="WOA23 months")
     a = parser.parse_args()
 
     if a.source == "grep":
         names = [f"{v}_{m}" for v in a.variables for m in sources.GREP["members"]]
         fetch_copernicus(sources.GREP["members_dataset"], names, a.region, a.start, a.end, a.out, a.max_depth,
                          a.daily)
-    elif a.source == "glorys12":
-        fetch_copernicus(sources.GLORYS12["dataset"], a.variables, a.region, a.start, a.end, a.out, a.max_depth,
-                         a.daily)
-    elif a.source == "ostia":
-        fetch_copernicus(sources.OSTIA["dataset"], [sources.OSTIA["variable"]], a.region, a.start, a.end, a.out,
-                         daily=a.daily)
-    elif a.source == "argo":
-        fetch_argo(a.region, a.start, a.end, a.max_pressure, a.out, a.argo_mode)
     else:
-        fetch_woa23(a.woa_period, a.woa_resolution, a.months, a.region, a.max_depth, a.out)
+        fetch_argo(a.region, a.start, a.end, a.max_pressure, a.out, a.argo_mode)
 
 
 if __name__ == "__main__":

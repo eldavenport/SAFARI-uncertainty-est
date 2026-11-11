@@ -14,24 +14,6 @@ GREP = dict(
              "Marine Data Store (MDS). DOI: 10.48670/moi-00024",
 )
 
-GLORYS12 = dict(
-    title="Global Ocean Physics Reanalysis GLORYS12V1, GLOBAL_MULTIYEAR_PHY_001_030",
-    dataset="cmems_mod_glo_phy_my_0.083deg_P1D-m",
-    doi="10.48670/moi-00021",
-    citation="Lellouche, J.-M., et al. (2021). The Copernicus Global 1/12 degree Oceanic and Sea Ice GLORYS12 "
-             "Reanalysis. Front. Earth Sci., 9, 698876. doi:10.3389/feart.2021.698876",
-)
-
-OSTIA = dict(
-    title="OSTIA reprocessed sea surface temperature analysis, SST_GLO_SST_L4_REP_OBSERVATIONS_010_011",
-    dataset="METOFFICE-GLO-SST-L4-REP-OBS-SST",
-    variable="analysis_error",
-    doi="10.48670/moi-00168",
-    citation="Good, S., et al. (2020). The current configuration of the OSTIA system for operational production "
-             "of foundation sea surface temperature and ice concentration analyses. Remote Sens., 12, 720. "
-             "doi:10.3390/rs12040720",
-)
-
 ARGO = dict(
     title="Argo float data and metadata from the Global Data Assembly Centre (Argo GDAC)",
     doi="10.17882/42182",
@@ -44,13 +26,10 @@ ARGO = dict(
     temperature_accuracy_K=0.002,
 )
 
-WOA23 = dict(
-    title="World Ocean Atlas 2023, temperature",
-    url="https://www.ncei.noaa.gov/thredds-ocean/fileServer/woa23/DATA/temperature/netcdf/{period}/{res}/"
-        "woa23_{period}_t{month:02d}_{grid}.nc",
-    # File-name grid codes (WOA23 Product Documentation, Table 2): 04 = 0.25 degree, 01 = 1 degree.
-    grid_codes={"0.25": "04", "1.00": "01"},
-    doi="10.25923/54bh-1613",
-    citation="Locarnini, R. A., et al. (2024). World Ocean Atlas 2023, Volume 1: Temperature. NOAA Atlas NESDIS 89. "
-             "doi:10.25923/54bh-1613",
+RG = dict(
+    title="Roemmich-Gilson Argo Climatology (temperature), 1 degree monthly objective analysis",
+    url="https://sio-argo.ucsd.edu/RG_Climatology.html",
+    citation="Roemmich, D. and J. Gilson (2009). The 2004-2008 mean and annual cycle of temperature, salinity, and "
+             "steric height in the global ocean from the Argo Program. Prog. Oceanogr., 82, 81-100. "
+             "doi:10.1016/j.pocean.2009.03.004",
 )
