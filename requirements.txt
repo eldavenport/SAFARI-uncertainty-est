@@ -1,0 +1,12 @@
+# Lower bounds: copernicusmarine 1.x reached end of life in 2025-07 (toolbox docs, end-of-life page).
+copernicusmarine>=2.0
+argopy>=1.5
+xarray>=2025.1
+numpy>=2.0
+scipy>=1.13
+pandas>=2.2
+netCDF4>=1.7
+matplotlib>=3.9
+pytest>=8.0
+gsw>=3.6
+tabulate>=0.9

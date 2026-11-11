@@ -1,0 +1,5 @@
+**.nc
+**.npz
+**.bin
+.venv/
+**.egg-info
