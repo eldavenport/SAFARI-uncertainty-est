@@ -1,5 +1,10 @@
 # Evaluation of the product options: North Pacific, winter 2014–15
 
+> **Historical.** This evaluation predates the current member-based monthly climatology (C1/C2 — see
+> [METHODS.md](METHODS.md)) and refers to the retired per-winter U1–U6 products and `scripts/run_winter.sh`, which
+> no longer exist. It is kept as the original evidence for the shared settings still in use (region, depth, the
+> statistics parameters, and the ≈ 50 km winter correlation length).
+
 **Set-up**
 - Region: 140–240 °E, 20–60 °N, 0–50 m, 1 November 2014 to 31 March 2015.
 - Argo: 8062 delayed-mode profiles (QC 1).

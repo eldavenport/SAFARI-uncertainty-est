@@ -1,7 +1,6 @@
 """Statistics behind the products: ensemble spread, error covariances from observation pairs, and the analysis update.
 
-Notation follows docs/PRODUCT_CATALOGUE.md: d = y - H x_b is the innovation, B and R the background- and
-observation-error covariances.
+Notation: d = y - H x_b is the innovation, B and R the background- and observation-error covariances.
 """
 
 from collections.abc import Iterable

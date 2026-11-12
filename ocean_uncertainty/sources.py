@@ -1,6 +1,6 @@
 """Where each input dataset lives and how to cite it.
 
-Every entry is documented in docs/PRODUCT_CATALOGUE.md. Copernicus Marine dataset IDs and variable names were read
+Method and provenance: docs/METHODS.md. Copernicus Marine dataset IDs and variable names were read
 from the live catalogue with ``copernicusmarine.describe`` on 2026-11-09.
 """
 

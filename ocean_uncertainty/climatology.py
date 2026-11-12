@@ -1,4 +1,4 @@
-"""Monthly climatology of upper-ocean temperature error: products C1 and C2 (docs/SERVER_PLAN.md).
+"""Monthly climatology of upper-ocean temperature error: products C1 and C2 (docs/METHODS.md).
 
 One task per (year, month) downloads a sample of days, accumulates the reanalysis-ensemble spread, and matches
 that month's Argo against every ensemble member and the ensemble mean; the build step pools the tasks by calendar
@@ -41,7 +41,7 @@ def sampled_days(year: int, month: int, step_days: int) -> list[datetime.date]:
     """Days of the month to sample: 1, 1 + step, ... up to day 28.
 
     Capped at 28 so every calendar month, February included, is sampled on the same days and adds the same degrees
-    of freedom (SERVER_PLAN.md, "Open choices"): a 5-day step gives 1, 6, 11, 16, 21, 26; a 10-day step 1, 11, 21.
+    of freedom (docs/METHODS.md): a 5-day step gives 1, 6, 11, 16, 21, 26; a 10-day step 1, 11, 21.
     """
     return [datetime.date(year, month, d) for d in range(1, 29, step_days)]
 
@@ -167,7 +167,7 @@ def build_c1(spread_files, out: pathlib.Path, max_depth: float, variable: str = 
                  "square-rooted; the 0-%d m mean variance square-rooted; and per member the 0-%d m RMS of "
                  "(member - mean), the error realisation used for perturbation." % (max_depth, max_depth),
                  "Three members sharing forcing, model family and observations: the spread probably underestimates "
-                 "the error. Each sampled day adds 2 degrees of freedom (SERVER_PLAN.md).")
+                 "the error. Each sampled day adds 2 degrees of freedom (docs/METHODS.md).")
 
 
 # ---------------------------------------------------------------------------------------------------------------
