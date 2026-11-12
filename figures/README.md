@@ -56,3 +56,12 @@ each of the three reconstructions, and from the no-model float-only map (RG), at
 **Tells us:** where each reference actually misses the real ocean. It is patchy because it only exists where floats
 happened to be. The four model panels look alike and are smaller than the RG panel — the models track the floats more
 closely than the smooth float-only map does.
+
+### fig7 — How much Argo adjusts the upper ocean (C3, four panels)
+**Shows:** (a) a winter map of how much a month of Argo *reduces the temperature uncertainty* (%), (b) a winter map of
+the *size* of the adjustment Argo makes (°C), (c) that reduction averaged over the region, month by month, and
+(d) how it changes with depth.
+**Tells us:** right where a float sits, Argo is powerful — it can cut the local uncertainty by most of it — but
+because floats are sparse and each one only influences about a 50 km radius, the region-wide effect is small (a few
+percent). In plain terms: a suite of Argo profiles strongly pins down the ocean *locally*, but leaves most of the map
+untouched. This is the honest answer to "how much would Argo perturb/adjust the upper ocean."

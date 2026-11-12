@@ -74,9 +74,34 @@ tight representativeness estimate. Its value is seasonal corroboration: `Argo �
 in summer, confirming the summer excess over the spread is fine-scale/sub-monthly representativeness (a point float
 sees more than a grid box), not ensemble under-dispersion.
 
+## C3 — Argo analysis increment (`c3.nc`)
+
+How much a month of Argo adjusts the upper ocean, i.e. the DA increment `δx = B Hᵀ (H B Hᵀ + R)⁻¹ d`, with
+`d = Argo − background`. For a point near one float this is `δx ≈ [σ_b²/(σ_b²+σ_o²)]·d` reaching out a length `L`,
+so the spread σ_b both sets the gain and maps where Argo has leverage.
+
+**What was done.** For each (year, month): a 2-D optimal interpolation at each depth level independently (vertical
+correlation neglected). `σ_b` = C1 `thetao_std` for that calendar month, bilinear at each point; horizontal
+background covariance `σ_b σ_b' exp(−r²/2L²)` with `L` = **prescribed 50 km** (C2's per-month HL `length_km` is too
+noisy to use directly — NaN to >1000 km — so the documented ~50 km winter length is used; override with
+`--length-km`); `R` diagonal from C2 `observation_variance` (or a chosen value); innovation `d` = `Argo − mean`. Profiles within 0.5° are
+**superobbed** (nearby Argo is not independent), and innovations beyond 3σ per level are **gross-error-rejected**
+(frontal/representativeness outliers the smooth grid cannot carry) — both prevent the increment overshooting. Pooled
+by calendar month.
+
+**Variables** (by `month, depth, lat, lon`): `increment_mean` (systematic adjustment), `increment_rms` (typical
+magnitude), `background_std` (= C1 σ_b), `analysis_std`, and `uncertainty_reduction = 1 − analysis_std/background_std`.
+
+**What it tells us.** The climatological (year-averaged) reduction reaches ~25–30 % at the best-sampled spots and
+~1 % region-mean — sparse Argo at a ~50 km reach. In any *individual* month the reduction right at a float is much
+larger (~70–90 %); it averages down here because floats sit in different places each year (use the per-(year, month)
+`increment` for a specific case). **Caveat:** structural-spread σ_b and a single `L` make this a realistic *magnitude
+and reach* of the adjustment, not a specific operational increment; the same assimilated-Argo floor as C2 applies.
+
 ## Deliberately not built
 
-- **C3 (Argo − WOA23 climatology)** — dropped; RG (monthly, obs-only) is the better model-free reference.
+- **Argo − WOA23 climatology** — dropped; RG (monthly, obs-only) is the better model-free reference. (The "C3" name
+  now denotes the increment above.)
 - **U1–U6** (earlier per-winter daily products with DA increments) — retired with the per-winter plan; the 2014–15
   evaluation that chose the shared settings is kept as evidence in [EVALUATION_2014-15.md](EVALUATION_2014-15.md).
 - **ORAS5 5-member ensemble** — considered and rejected: coarse/monthly, still Argo-suppressed, and not independent

@@ -324,6 +324,10 @@ def main() -> None:
             add_rg_innovations(innovations, a.rg_dir, a.region)
         build_c1(sorted(a.data_dir.glob("spread_*.nc")), a.out_dir / "c1.nc", a.max_depth)
         build_c2(innovations, a.out_dir / "c2.nc", **stats)
+        # C3 (the Argo analysis increment) needs the C1 and C2 just written.
+        from ocean_uncertainty.increment import build_c3
+        with xr.open_dataset(a.out_dir / "c1.nc") as c1, xr.open_dataset(a.out_dir / "c2.nc") as c2:
+            build_c3(innovations, c1.load(), c2.load(), a.out_dir / "c3.nc")
 
 
 if __name__ == "__main__":

@@ -155,6 +155,27 @@ def fig_argo_maps(c2, members, out):
     fig.savefig(out / "fig6_argo_minus_background_maps.png", dpi=130)
 
 
+def fig_c3(c3, out):
+    """C3: where and how much a month of Argo adjusts the upper ocean."""
+    k = nearest_depth(c3, DEPTH_M)
+    red = 100 * season_mean(c3["uncertainty_reduction"].isel(depth=k), SEASONS["DJF"])
+    rms = season_mean(c3["increment_rms"].isel(depth=k), SEASONS["DJF"])
+    fig, ax = plt.subplots(2, 2, figsize=(12, 8), constrained_layout=True)
+    m0 = _map(ax[0, 0], red, f"(a) DJF uncertainty reduction at ~{DEPTH_M:.0f} m", 0, float(red.quantile(0.99)))
+    fig.colorbar(m0, ax=ax[0, 0], label="%")
+    m1 = _map(ax[0, 1], rms, f"(b) DJF increment RMS at ~{DEPTH_M:.0f} m", 0, float(rms.quantile(0.99)))
+    fig.colorbar(m1, ax=ax[0, 1], label="K")
+    ax[1, 0].plot(c3["month"], 100 * region_mean(c3["uncertainty_reduction"].isel(depth=k)), "o-")
+    ax[1, 0].set(xlabel="month", ylabel="%", title=f"(c) region-mean reduction at ~{DEPTH_M:.0f} m",
+                 xticks=range(1, 13)); ax[1, 0].grid(alpha=0.3)
+    ax[1, 1].plot(100 * region_mean(c3["uncertainty_reduction"]).mean("month"), c3["depth"], "o-")
+    ax[1, 1].invert_yaxis()
+    ax[1, 1].set(xlabel="%", ylabel="depth (m)", title="(d) annual region-mean reduction vs depth")
+    ax[1, 1].grid(alpha=0.3)
+    fig.suptitle("C3 Argo analysis increment: where and how much Argo adjusts the upper ocean")
+    fig.savefig(out / "fig7_c3_increment.png", dpi=130)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--products", type=pathlib.Path, required=True)
@@ -170,6 +191,9 @@ def main():
     fig_triad(c2, members, a.out)
     fig_member_anomaly_maps(c1, a.out)
     fig_argo_maps(c2, members, a.out)
+    c3_path = a.products / "c3.nc"
+    if c3_path.exists():
+        fig_c3(xr.open_dataset(c3_path), a.out)
     print("wrote figures to", a.out)
 
 

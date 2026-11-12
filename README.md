@@ -11,9 +11,39 @@ by calendar month.
 |---|---|
 | **C1** `c1.nc` | Reanalysis spread: σ(month, depth, lat, lon) = std across the 3-member GREP ensemble (the perturbation amplitude/pattern), the 0–50 m layer mean, and per-member `member − mean` maps |
 | **C2** `c2.nc` | Argo minus each member, the ensemble mean, and the Roemmich–Gilson Argo-only field, by calendar month: bias, RMS, std, counts, 2° RMS maps, and a Hollingsworth–Lönnberg split (secondary) |
+| **C3** `c3.nc` | The analysis increment: how much a month of Argo adjusts the upper ocean, by calendar month — the typical adjustment magnitude and the uncertainty it removes (`analysis_std` vs `background_std`) |
 
 C2 is the observational check on C1: for a reliable 3-member ensemble `RMS(Argo − member) ≈ √2 × spread`. See
 [docs/METHODS.md](docs/METHODS.md) and the figure guide in the products' `figures/README.md`.
+
+## How much does a suite of Argo profiles adjust the analysis? (C3)
+
+The adjustment Argo makes is the data-assimilation increment
+
+```
+δx = B Hᵀ (H B Hᵀ + R)⁻¹ d ,     d = Argo − background (innovation)
+```
+
+For a state point near one float this is a gain × innovation, reaching out a correlation length `L`:
+
+```
+δx ≈ [ σ_b² / (σ_b² + σ_o²) ] · (Argo − background) ,   spread over radius ≈ L
+```
+
+Each piece comes from the products — **the spread is what sets how much weight Argo gets**, so C1 is both the
+amplitude and the map of *where* Argo has leverage:
+
+| Symbol | Meaning | From |
+|---|---|---|
+| `σ_b` | background-error std (sets the gain and where Argo matters) | **C1** `thetao_std`, validated for size by C2 |
+| `L` | horizontal correlation length (how far each float reaches) | prescribed ≈ 50 km (C2 `length_km` is the noisy HL basis) |
+| `σ_o` | observation + representativeness error | **C2** `observation_variance` (or a chosen value) |
+| `d` | innovation, Argo − background | **C2** `innov_mean` / `innov_<member>` |
+
+`ocean_uncertainty.increment` builds `δx(depth, lat, lon)` as a 2-D optimal interpolation at each level (nearby
+profiles are superobbed and outliers gross-error-checked, so the increment doesn't overshoot). Pooled by calendar
+month into **C3**. Caveat: structural-spread σ_b and a single `L` make this a *realistic magnitude and reach* of the
+Argo adjustment, not a specific operational system's increment.
 
 ## Set-up
 
